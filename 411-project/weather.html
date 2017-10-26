@@ -1,22 +1,38 @@
 <!DOCTYPE html>
 <html >
 <head>
-  <meta charset="UTF-8">
-  <title>411 project</title>
-  
-  
-  
-  
-  
-</head>
+<meta charset="UTF-8">
+<title>411 project</title> 
+<style>
+body {
+	background-image:url("https://wallpaperscraft.com/image/rain_glare_surface_drops_92974_1920x1080.jpg");
+	color:white
+}
+a {
+	color: #1ec503;
+}
+a:link {
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}	
+</style>
+<body>
+	<h1><p style="font-family:Courier; text-align:center;">Weather</p></h1>
+	<h3><p style="font-family:Courier; text-align:center;">Find the weather of any location</h3>
+  	<p style="font-family:Courier; text-align:center;">Need to find the weather conditions in Seattle when you are in Boston? Look no further!
+  	</p>
 
-<body>
-<html>
-<body>
 <!–– Text input from user, current city is typed in and searched -->
+<p style="font-family:Courier; text-align:center;">
 <input id="userInput" type="text" onkeypress="key_down(event)" placeholder="Input your current city">
 <input id="search" type="button" value="search" onClick="test()">
-    
+</p>
+ 
 <script>
     
 	function key_down(e) {
@@ -39,20 +55,30 @@
         	console.log(data);
         // Uses city data and Yahoo API JSON query to find temperature results
         	userInput === "Hell" ? $ ('#temp').html("The weather right now in Hell is 666°F and dry as fuck with a chance of fire.") :
+        	//var weather = "The weather right now in " + city + " is " + data.query.results.channel.item.condition.temp + "°F and " + data.query.results.channel.item.condition.text + ".";
+        	//var result = weather.fontcolor("green");
+            //$('temp').html(result);
             $('#temp').html("The weather right now in " + city + " is " + data.query.results.channel.item.condition.temp + "°F and " + data.query.results.channel.item.condition.text + ".");
             //$('#text').html("The forcast today in "+ city + " is " + data.query.results.channel.item.condition.text + ".")
   });
 });
           // Writes weather data recieved from Yahoo weather API
-          document.write(getWeather(userInput));
+          //var weather = getWeather(userInput);
+          //var result = weather.fontcolor("green");
+          //weather.style.color="#F0FFFF"
+          //document.getElementById("search").style.justifyContent="center";
+          //document.getElementById("search").innerHTML = result;
    
         }
         
-    </script>
-</body>
+</script>
 
 <!–– Text displayed temporarily before search is input or while search is occurring -->
-<div id="temp">Loading your weather data...</div>
+<div id="temp"><p style="font-family:Courier; text-align:center;">Loading your weather data...</p></div>
+<p style="font-family:Courier; text-align:right; position:absolute;bottom: 5px; color:#1ec503">
+
+Find our project repo <a href="https://github.com/coffeeaddict237/CS411-API-Project">here</a>
+</p>
 <div id="text"><div>
 </html>
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
