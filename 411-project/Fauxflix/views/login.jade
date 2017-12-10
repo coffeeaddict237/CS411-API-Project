@@ -1,0 +1,38 @@
+extends layout
+
+
+block content
+    .main.container
+        .row
+            .col-md-6.col-md-offset-3
+                h1.display-4.m-b-2 Sign Up
+
+                // register form
+                form(method='POST' action='/register')
+                    div.form-group
+                        label(for='name') First:
+                        input#name.form-control(type='text', placeholder='first' name='name')
+                    div.form-group
+                        label(for='pw') Password:
+                        input#pw.form-control(type='password' name='password')
+                    div.form-group
+                        label(for='pw2') Confirm Password:
+                        input#pw2.form-control(type='password' name='confirmPassword')
+                    button.btn.btn-primary(type='submit') Sign up
+
+
+    form(class='form-horizontal',action='/login',method='POST',id='loginForm')
+        fieldset
+            div#legend
+                legend Login
+            div.control-group
+                label(for='username',class='control-label') Username
+                div.controls
+                    input(type='text',id='username',name='username',placeholder='Username',class='input-xlarge')
+            div.control-group
+                label(for='password',class='control-label') Password
+                div.controls
+                    input(type='text',id='password',name='password',placeholder='Password',class='input-xlarge')
+            div.control-group
+                div.controls
+                    button.btn.btn-primary(type='submit') Log in/Sign up

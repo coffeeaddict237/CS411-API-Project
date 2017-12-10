@@ -1,0 +1,245 @@
+/// Create the same keyframes twice (for retrigger in pure CSS)
+/// @author Gregor Adams
+/// @param  {Keyword} $name - name of the animation (will be suffixed with --1 and --2)
+@mixin double-keyframes($name) {
+  // write the keyframe rules to the document root
+  @at-root {
+    // write the same keyframes twice
+    @for $i from 1 through 2 {
+      $keyframe-name: unquote($name + "--" + $i);
+
+      @keyframes #{$keyframe-name} {
+        @content;
+      }
+    }
+  }
+}
+
+/// Create a 3d-shadow in a certain direction
+/// @author Gregor Adams
+/// @param  {Number}        $depth - length of the shadow
+/// @param  {Unit}          $color - color of the shadow
+/// @param  {Unit}          $x     - step to next shadow on the x axis
+/// @param  {Unit}          $y     - step to next shadow on the y axis
+/// @param  {Unit}          $blur  - blur of the shadow
+/// @param  {Color|false}   $mix   - optinally add a color to mix in
+/// @return {List}          - returns a text-shadow
+@function d3($depth, $color, $x: 1px, $y: 1px, $blur: 0, $mix: false) {
+  $shadow: ();
+
+  @for $i from 1 through $depth {
+    // append to the existing shadow
+    @if type-of($mix) != 'color' {
+      $shadow: append($shadow, round($i * $x) round($i * $y) $blur $color, comma);
+
+    } @else {
+      $shadow: append($shadow, round($i * $x) round($i * $y) $blur mix($mix,$color,0.3%*$i), comma);
+    }
+  }
+
+  @return $shadow;
+}
+
+// options
+
+$c_fg:         #f00;
+$c_bg:         #fff;
+$c_3d:         #f2f2f2;
+$c_shadow:     #dadada;
+$c_shadow-mix: #6998da;
+
+$google-font: Oswald; // should be a google font
+$font-weight: 700;
+$letters: 8;
+
+
+// fonts
+@import url(https://fonts.googleapis.com/css?family=#{$google-font}:#{$font-weight});
+
+$font-family: $google-font, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+// basic styles
+html,
+body {
+  // force full viewport size
+  height: 100%;
+  width: 100%;
+  // disable scrolling
+  overflow: hidden;
+}
+
+body {
+  // remove the body margin
+  margin: 0;
+  // create a flex-box model
+  display: flex;
+  flex-flow: row wrap;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+// hide the radios that allow us to retrigger the animation
+.retrigger {
+  position: absolute;
+  left: -5em;
+  opacity: 0;
+}
+
+// the section containing the retrigger button
+.buttons {
+  flex: 0 0 auto;
+  height: 2em;
+  line-height: 2em;
+  background: $c_bg;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+
+  // the labels are disguised as buttons
+  .button {
+    padding: 0.3em 1em;
+    font-family: $font-family;
+    color: $c_fg;
+    font-size: 1.3em;
+    display: none;
+    cursor: pointer;
+    border: 2px solid $c_fg;
+    &:hover {
+      color: $c_bg;
+      background: $c_fg;
+    }
+    // display the label for the unchecked input
+    @for $i from 1 through 2 {
+      &--#{$i} {
+        #retrigger--#{$i % 2 + 1}:checked ~ & {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+// the logo area
+.logo {
+  // create a flex-box model
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+  // set the perspective
+  perspective: 1000px;
+  perspective-origin: 50% 0%;
+  // define fonts;
+  font-size: 8em;
+  font-family: $font-family;
+  color: $c_bg;
+  // scale the logo
+  transform: scaleY(0.8);
+}
+
+// animation for the color
+@include double-keyframes("color") {
+  0% {
+    color: $c_bg;
+  }
+  100% {
+    color: $c_fg;
+  }
+}
+
+// the letters
+span {
+  // enable webkit GPU rendering
+  -webkit-backface-visibility: hidden;
+  // animation settings
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in, ease-out, linear;
+
+  // handle each letter separately 1-8
+  @for $i from 1 through $letters {
+    $offset: $i - 4;
+    @if $i < 4.5 {$offset: $offset - 1;}
+    $trans: if($offset > 0, -89.5deg, 89.5deg);
+
+    &:nth-child(#{$i}) {
+      $del: 1s + 0.1s * $i;
+      $maxdel: 1s + 0.1s * $letters;
+      $dur: 1s + 0.05s * $i;
+      $maxdur: 1s + 0.05s * $letters;
+      animation-delay: $del, $maxdel + $maxdur, $maxdel + $maxdur + 0.4s;
+      animation-duration: $dur, 3s, 0.1s;
+
+      // allow to run the animation again
+      @for $j from 1 through 2 {
+        #retrigger--#{$j}:checked ~ .logo & {
+          animation-name: in_#{$i}--#{$j}, out_#{$i}--#{$j}, color--#{$j};
+        }
+      }
+
+      // trans/de-form the letters
+      transform-origin: 50% + 50%/$offset 200%;
+      font-size: if($offset == 0,
+              0.85em,
+              0.9em + 0.015*pow(abs($offset),2));
+    }
+
+    // the animation magic
+    @include double-keyframes("in_" + $i) {
+      0% {
+        transform:
+                if($offset == 0, scale(1, 1), scale(95.9 - abs($offset) * 10, 1))
+                if($offset == 0, translatey(0%), rotatey($trans));
+        text-shadow:
+                d3(15, rgba($c_3d, 0), 0, 0),
+                d3(50, rgba($c_shadow, 0), 0, 0);
+      }
+
+      50% {
+        transform:
+                if($offset == 0, scale(1.2, 1.2), scale(126.2 - abs($offset) * 10, 1.2))
+                if($offset == 0, translatey(-16%), rotatey($trans));
+        text-shadow:
+                d3(15, $c_3d, if($offset == 0, 0, -0.25px * $offset), 0),
+                d3(50, $c_shadow, 1px, 3px, 3px, $c_shadow-mix);
+      }
+
+      100% {
+        transform:
+                if($offset == 0, scale(1.1, 1.1), scale(116.2 - abs($offset) * 10, 1.1))
+                if($offset == 0, translatey(-12%), rotatey($trans));
+        text-shadow:
+                d3(15, $c_3d, if($offset == 0, 0, -0.25px * $offset), 0),
+                d3(50, $c_shadow, 1px, 3px, 3px, $c_shadow-mix);
+      }
+    }
+
+    @include double-keyframes("out_" + $i) {
+      0% {
+        transform:
+                if($offset == 0, scale(1.1, 1.1), scale(116.2 - abs($offset) * 10, 1.1))
+                if($offset == 0, translatey(-12%), rotatey($trans));
+        text-shadow:
+                d3(15, $c_3d, if($offset == 0, 0, -0.25px * $offset), 0),
+                d3(50, $c_shadow, 1px, 3px, 3px, $c_shadow-mix);
+      }
+
+      20% {
+        transform:
+                if($offset == 0, scale(1.05, 1.05), scale(105.9 - abs($offset) * 10, 1.05))
+                if($offset == 0, translatey(-7%), rotatey($trans));
+        text-shadow:
+                d3(15, rgba($c_3d, 0), 0, 0),
+                d3(50, rgba($c_shadow, 0), 0, 0);
+      }
+
+      100% {
+        transform:
+                if($offset == 0, scale(1, 1), scale(95.9 - abs($offset) * 10, 1))
+                if($offset == 0, translatey(0%), rotatey($trans));
+        text-shadow:
+                d3(15, rgba($c_3d, 0), 0, 0),
+                d3(50, rgba($c_shadow, 0), 0, 0);
+      }
+    }
+  }
+}

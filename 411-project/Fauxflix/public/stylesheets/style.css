@@ -1,0 +1,93 @@
+/*Netflix colors:
+#db0000 lighter red
+#000000 black
+#ffffff white
+#564d4d gray
+#831010 dark red
+*/
+
+
+body {
+    padding: 50px;
+    font: 14px Helvetica;
+    background: #ffffff;
+    color: #000000;
+    margin: 0;
+    display: inline;
+    flex-flow: nowrap;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+
+}
+
+h1 {
+    font-family: Helvetica;
+    text-align: center;
+    color: #db0000
+}
+
+h2 {
+    font-family: Helvetica;
+    text-align: center;
+    color: #db0000;
+}
+p {
+    font-family: Helvetica;
+    text-align: center;
+    color: black;
+    flex-flow: nowrap;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+a {
+    color: #0047ff;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.dropdown-menu .sub-menu {
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    margin-top: -1px;
+}
+
+.dropdown-menu li:hover .sub-menu {
+    visibility: visible;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+    justify-content: center;
+}
+
+button.btn-default {
+    background-color: #db0000;
+    color: #ffffff;
+}
+
+button.btn.btn-primary {
+    background-color: #db0000;
+
+}
